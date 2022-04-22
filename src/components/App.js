@@ -1,3 +1,5 @@
+import React from "react";
+// import ReactDOM from "react-dom/client";
 import Header from "./Header.js";
 import Footer from "./Footer.js";
 import Main from "./Main.js";
@@ -5,6 +7,13 @@ import PopupWithForm from "./PopupWithForm.js";
 import ImagePopup from "./ImagePopup.js";
 
 function App() {
+  const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] =
+    React.useState(false);
+  const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] =
+    React.useState(false);
+  const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
+  const [selectedCard, setSelectedCard] = React.useState(false);
+
   function CreatePopupAvatar() {
     const Element = (
       <label className="popup__label popup__label_type_profile-avatar">
@@ -23,6 +32,9 @@ function App() {
     return PopupWithForm({
       name: "profile-avatar",
       title: "Обновить аватар",
+      text: "Сохранить",
+      isOpen: isEditAvatarPopupOpen,
+      onClose: closeAllPopups,
       children: Element,
     });
   }
@@ -63,6 +75,9 @@ function App() {
     return PopupWithForm({
       name: "profile",
       title: "Редактировать профиль",
+      text: "Сохранить",
+      isOpen: isAddPlacePopupOpen,
+      onClose: closeAllPopups,
       children: Element,
     });
   }
@@ -101,21 +116,61 @@ function App() {
     return PopupWithForm({
       name: "cards",
       title: "Новое место",
+      text: "Сохранить",
+      isOpen: isEditProfilePopupOpen,
+      onClose: closeAllPopups,
       children: Element,
     });
+  }
+  function handleCardClick(e) {
+    setSelectedCard(e.target);
+  }
+
+  function handleEditAvatarClick() {
+    setIsEditAvatarPopupOpen(true);
+  }
+
+  function handleEditProfileClick() {
+    setIsEditProfilePopupOpen(true);
+  }
+  function handleAddPlaceClick() {
+    setIsAddPlacePopupOpen(true);
+  }
+
+  function closeAllPopups(evt) {
+    if (
+      evt.key === "Escape" ||
+      evt.target.classList.contains("popup") ||
+      evt.target.classList.contains("popup__close")
+    ) {
+      setIsEditAvatarPopupOpen(false);
+      setIsEditProfilePopupOpen(false);
+      setIsAddPlacePopupOpen(false);
+      setSelectedCard(false);
+    }
   }
 
   return (
     <>
       <div className="page">
         <Header />
-        <Main />
+        <Main
+          onEditAvatar={handleEditAvatarClick}
+          onEditProfile={handleEditProfileClick}
+          onAddPlace={handleAddPlaceClick}
+          onImagePopup={handleCardClick}
+          // card={cardItem}
+        />
         <Footer />
         <section className="popups" tabindex="0">
           <CreatePopupAvatar />
           <CreatePopupProfile />
           <CreatePopupCards />
-          <ImagePopup />
+          <ImagePopup
+            name={"image"}
+            isOpen={selectedCard}
+            onClose={closeAllPopups}
+          />
 
           {/* <div className="popup popup_type_profile-avatar">
             <div className="popup__container popup__container_type_profile-avatar">
@@ -301,7 +356,7 @@ function App() {
         </section>
       </div>
 
-      <template className="card-template">
+      {/* <template className="card-template">
         <li className="card">
           <img className="card__image" src="#" alt="" />
           <button
@@ -321,7 +376,7 @@ function App() {
             </div>
           </div>
         </li>
-      </template>
+      </template> */}
     </>
   );
 }
