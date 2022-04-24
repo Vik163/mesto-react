@@ -19,7 +19,7 @@ function PopupWithForm(props) {
           action="#"
           name={props.name}
           className={`popup__form popup__form_type_${props.name}`}
-          novalidate
+          noValidate
         >
           {props.children}
           <button className="popup__submit button-hover" type="submit">

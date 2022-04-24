@@ -1,5 +1,4 @@
 import React from "react";
-// import ReactDOM from "react-dom/client";
 import Header from "./Header.js";
 import Footer from "./Footer.js";
 import Main from "./Main.js";
@@ -12,7 +11,7 @@ function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] =
     React.useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
-  const [selectedCard, setSelectedCard] = React.useState(false);
+  const [selectedCard, setSelectedCard] = React.useState({});
 
   function CreatePopupAvatar() {
     const Element = (
@@ -23,7 +22,6 @@ function App() {
           type="url"
           placeholder="Ссылка на картинку"
           name="link"
-          value=""
           required
         />
         <span className="popup__input-error url-input-avatar-error"></span>
@@ -49,9 +47,8 @@ function App() {
             type="text"
             name="inputName"
             placeholder="Имя"
-            value=""
-            minlength="2"
-            maxlength="40"
+            minLength="2"
+            maxLength="40"
             required
           />
           <span className="popup__input-error name-input-error"></span>
@@ -63,9 +60,8 @@ function App() {
             type="text"
             placeholder="О себе"
             name="inputAboutMe"
-            value=""
-            minlength="2"
-            maxlength="200"
+            minLength="2"
+            maxLength="200"
             required
           />
           <span className="popup__input-error about-me-input-error"></span>
@@ -92,9 +88,8 @@ function App() {
             type="text"
             placeholder="Название"
             name="name"
-            value=""
-            minlength="2"
-            maxlength="30"
+            minLength="2"
+            maxLength="30"
             required
           />
           <span className="popup__input-error title-input-error"></span>
@@ -106,7 +101,6 @@ function App() {
             type="url"
             placeholder="Ссылка на картинку"
             name="link"
-            value=""
             required
           />
           <span className="popup__input-error url-input-error"></span>
@@ -122,8 +116,8 @@ function App() {
       children: Element,
     });
   }
-  function handleCardClick(e) {
-    setSelectedCard(e.target);
+  function handleCardClick(card) {
+    setSelectedCard(card);
   }
 
   function handleEditAvatarClick() {
@@ -145,7 +139,7 @@ function App() {
       setIsEditAvatarPopupOpen(false);
       setIsEditProfilePopupOpen(false);
       setIsAddPlacePopupOpen(false);
-      setSelectedCard(false);
+      setSelectedCard({});
     }
   }
 
@@ -160,15 +154,19 @@ function App() {
           onImagePopup={handleCardClick}
         />
         <Footer />
-        <section className="popups" tabindex="0">
-          <CreatePopupAvatar />
-          <CreatePopupProfile />
-          <CreatePopupCards />
-          <ImagePopup
-            name={"image"}
-            isOpen={selectedCard}
-            onClose={closeAllPopups}
-          />
+        <section className="popups" tabIndex="0">
+          <>
+            <CreatePopupAvatar />
+            <CreatePopupProfile />
+            <CreatePopupCards />
+            <ImagePopup
+              name={"image"}
+              card={selectedCard}
+              onClose={closeAllPopups}
+            />
+          </>
+          /* Не понял и нашел, что и как нужно сделать. Если можно, намекните
+          поподробнее*/
         </section>
       </div>
     </>
