@@ -118,33 +118,3 @@ export const apiNew = new ApiNew({
     "Content-Type": "application/json",
   },
 });
-
-// class ApiNew extends Api {
-//   constructor({ settings, key }) {
-//     super(settings);
-//     this._key = key;
-//   }
-
-//   getCards() {
-//     return fetch(`${this._settings.baseUrl}/cards`, {
-//       method: "POST",
-//       headers: {
-//         authorization: "fcbbb83d-e200-4418-b5ab-2457f84f25b4",
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({
-//         name: formValues.name,
-//         link: formValues.link,
-//       }),
-//     }).then(this._checkResponse);
-//   }
-// }
-
-// export const apiNew = new ApiNew({
-//   baseUrl: "https://api.unsplash.com",
-//   apiKey: "RU6Yn7QRb-8nJX0trvJD756kA_f726quDvuHEoe9XKE",
-//   // headers: {
-//   //   authorization: "fcbbb83d-e200-4418-b5ab-2457f84f25b4",
-//   //   "Content-Type": "application/json",
-//   // },
-// });
