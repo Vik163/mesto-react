@@ -55,9 +55,13 @@ function Main(props) {
 
       <section className="cards content__cards">
         <ul className="cards__container">
-          {cards.map((card) => {
-            return Card({ card: card, onImagePopup: props.onImagePopup });
-          })}
+          {cards.map((card) => (
+            <Card
+              card={card}
+              onImagePopup={props.onImagePopup}
+              key={card._id}
+            />
+          ))}
         </ul>
       </section>
     </main>
