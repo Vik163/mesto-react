@@ -58,8 +58,8 @@ class Api {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        name: formValues.inputName,
-        about: formValues.inputAboutMe,
+        name: formValues.name,
+        about: formValues.about,
       }),
     }).then(this._checkResponse);
   }
