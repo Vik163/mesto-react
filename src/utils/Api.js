@@ -72,7 +72,7 @@ class Api {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        avatar: formValues.link,
+        avatar: formValues.avatar,
       }),
     }).then(this._checkResponse);
   }

@@ -5,8 +5,10 @@ import { CurrentUserContext } from "../contexts/CurrentUserContext";
 function EditProfilePopup(props) {
   const currentUser = React.useContext(CurrentUserContext);
 
-  const [description, setDescription] = React.useState(currentUser.about);
-  const [name, setName] = React.useState(currentUser.name);
+  const [description, setDescription] = React.useState("");
+  const [name, setName] = React.useState("");
+
+  //Убрать ошибку в консоли не получилось. Не знаю, что делать. Надеюсь на Вашу помощь!
 
   React.useEffect(() => {
     setName(currentUser.name);
@@ -24,7 +26,6 @@ function EditProfilePopup(props) {
   function handleSubmit(e) {
     e.preventDefault();
 
-    // Передаём значения управляемых компонентов во внешний обработчик
     props.onUpdateUser({
       name,
       about: description,

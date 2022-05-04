@@ -3,10 +3,13 @@ import Header from "./Header.js";
 import Footer from "./Footer.js";
 import Main from "./Main.js";
 import { apiNew } from "./../utils/Api.js";
-import PopupWithForm from "./PopupWithForm.js";
+import AddPlacePopup from "./AddPlacePopup.js";
 import ImagePopup from "./ImagePopup.js";
 import EditProfilePopup from "./EditProfilePopup.js";
+import EditAvatarPopup from "./EditAvatarPopup.js";
 import { CurrentUserContext, Cards } from "../contexts/CurrentUserContext";
+
+//Накосячил, конечно. Но, что еще поправить не знаю.
 
 function App() {
   const [currentUser, setCurrentUser] = React.useState({});
@@ -30,17 +33,25 @@ function App() {
       });
   }, []);
 
+  function handleAddPlaceSubmit(obj, setValueImage, setValuePlace) {
+    apiNew
+      .addCard(obj)
+      .then((newCard) => {
+        setCards([newCard, ...cards]);
+        closeAllPopups();
+        setValueImage("");
+        setValuePlace("");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
   function handleCardDelete(card) {
     apiNew
       .deleteCard(card)
-      .then((result) => {
-        console.log(result);
-        // result.remove();
-        // result = null;
-        setCards((state) =>
-          state.filter((c) => c._id === card._id && result.remove())
-        );
-        // popupWithDeleteCard.close();
+      .then(() => {
+        setCards((state) => state.filter((c) => !(c._id === card._id)));
       })
       .catch((err) => {
         console.log(err);
@@ -89,6 +100,19 @@ function App() {
     setSelectedCard(card);
   }
 
+  function handleUpdateAvatar(avatar, setValueAvatar) {
+    apiNew
+      .addAvatar(avatar)
+      .then((result) => {
+        setCurrentUser(result);
+        closeAllPopups();
+        setValueAvatar("");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
   function handleEditAvatarClick() {
     setIsEditAvatarPopupOpen(true);
   }
@@ -122,62 +146,21 @@ function App() {
           />
           <Footer />
           <section className="popups" tabIndex="0">
-            <PopupWithForm
-              name={"profile-avatar"}
-              title={"Обновить аватар"}
-              text={"Сохранить"}
+            <EditAvatarPopup
               isOpen={isEditAvatarPopupOpen}
               onClose={closeAllPopups}
-            >
-              <label className="popup__label popup__label_type_profile-avatar">
-                <input
-                  className="popup__input popup__input_type_link"
-                  id="url-input-avatar"
-                  type="url"
-                  placeholder="Ссылка на картинку"
-                  name="link"
-                  required
-                />
-                <span className="popup__input-error url-input-avatar-error"></span>
-              </label>
-            </PopupWithForm>
+              onUpdateAvatar={handleUpdateAvatar}
+            />
             <EditProfilePopup
               isOpen={isEditProfilePopupOpen}
               onClose={closeAllPopups}
               onUpdateUser={handleUpdateUser}
             />
-            <PopupWithForm
-              name={"cards"}
-              title={"Новое место"}
-              text={"Сохранить"}
+            <AddPlacePopup
               isOpen={isAddPlacePopupOpen}
               onClose={closeAllPopups}
-            >
-              <label className="popup__label">
-                <input
-                  className="popup__input popup__input_type_title"
-                  id="title-input"
-                  type="text"
-                  placeholder="Название"
-                  name="name"
-                  minLength="2"
-                  maxLength="30"
-                  required
-                />
-                <span className="popup__input-error title-input-error"></span>
-              </label>
-              <label className="popup__label">
-                <input
-                  className="popup__input popup__input_type_link"
-                  id="url-input"
-                  type="url"
-                  placeholder="Ссылка на картинку"
-                  name="link"
-                  required
-                />
-                <span className="popup__input-error url-input-error"></span>
-              </label>
-            </PopupWithForm>
+              onAddPlace={handleAddPlaceSubmit}
+            />
             <ImagePopup
               name={"image"}
               card={selectedCard}
