@@ -4,8 +4,8 @@ import PopupWithForm from "./PopupWithForm.js";
 function AddPlacePopup(props) {
   const [valuePlace, setValuePlace] = React.useState("");
   const [valueImage, setValueImage] = React.useState("");
-  const textInputPlace = React.useRef(0);
-  const textInputImage = React.useRef(0);
+  const textInputPlace = React.useRef({});
+  const textInputImage = React.useRef({});
 
   function handleChangePlace(e) {
     setValuePlace(e.target.value);
@@ -32,7 +32,7 @@ function AddPlacePopup(props) {
     <PopupWithForm
       name={"cards"}
       title={"Новое место"}
-      text={"Сохранить"}
+      text={props.text}
       isOpen={props.isOpen}
       onClose={props.onClose}
       onSubmit={handleSubmit}

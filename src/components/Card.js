@@ -49,7 +49,7 @@ function Card(props) {
             onClick={handleLikeClick}
             aria-label="like"
           ></button>
-          <p className="card__likes-num">0</p>
+          <p className="card__likes-num">{props.card.likes.length}</p>
         </div>
       </div>
     </li>

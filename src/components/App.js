@@ -4,6 +4,7 @@ import Footer from "./Footer.js";
 import Main from "./Main.js";
 import { apiNew } from "./../utils/Api.js";
 import AddPlacePopup from "./AddPlacePopup.js";
+import PopupWithForm from "./PopupWithForm.js";
 import ImagePopup from "./ImagePopup.js";
 import EditProfilePopup from "./EditProfilePopup.js";
 import EditAvatarPopup from "./EditAvatarPopup.js";
@@ -19,7 +20,13 @@ function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] =
     React.useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
+  const [isAddConfirmPopupOpen, setIsAddConfirmPopupOpen] =
+    React.useState(false);
+  const [valueSubmit, setValueSubmit] = React.useState("Сохранить");
+  const [valueSubmitDeleteCard, setValueSubmitDeleteCard] =
+    React.useState("Да");
   const [selectedCard, setSelectedCard] = React.useState({});
+  const [cardDelete, setCardDelete] = React.useState({});
   const [cards, setCards] = React.useState([]);
 
   React.useEffect(() => {
@@ -34,6 +41,7 @@ function App() {
   }, []);
 
   function handleAddPlaceSubmit(obj, setValueImage, setValuePlace) {
+    setValueSubmit("Сохранение...");
     apiNew
       .addCard(obj)
       .then((newCard) => {
@@ -44,21 +52,38 @@ function App() {
       })
       .catch((err) => {
         console.log(err);
+      })
+      .finally(() => {
+        setValueSubmit("Сохранить");
       });
   }
 
-  function handleCardDelete(card) {
+  function handleCardDelete(e) {
+    e.preventDefault();
+
+    setValueSubmitDeleteCard("Сохранение...");
     apiNew
-      .deleteCard(card)
+      .deleteCard(cardDelete)
       .then(() => {
-        setCards((state) => state.filter((c) => !(c._id === card._id)));
+        setCards((state) => state.filter((c) => !(c._id === cardDelete._id)));
+        closeAllPopups();
       })
       .catch((err) => {
         console.log(err);
+      })
+      .finally(() => {
+        setValueSubmit("Да");
       });
   }
 
+  function onConfirmDelete(card) {
+    setIsAddConfirmPopupOpen(true);
+    setCardDelete(card);
+  }
+
   function handleUpdateUser(obj) {
+    setValueSubmit("Сохранение...");
+
     apiNew
       .sendInfoProfile(obj)
       .then((result) => {
@@ -67,6 +92,9 @@ function App() {
       })
       .catch((err) => {
         console.log(err);
+      })
+      .finally(() => {
+        setValueSubmit("Сохранить");
       });
   }
 
@@ -101,6 +129,7 @@ function App() {
   }
 
   function handleUpdateAvatar(avatar, setValueAvatar) {
+    setValueSubmit("Сохранение...");
     apiNew
       .addAvatar(avatar)
       .then((result) => {
@@ -110,6 +139,9 @@ function App() {
       })
       .catch((err) => {
         console.log(err);
+      })
+      .finally(() => {
+        setValueSubmit("Сохранить");
       });
   }
 
@@ -129,6 +161,7 @@ function App() {
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
     setSelectedCard({});
+    setIsAddConfirmPopupOpen(false);
   }
 
   return (
@@ -142,7 +175,7 @@ function App() {
             onAddPlace={handleAddPlaceClick}
             onImagePopup={handleCardClick}
             onCardLike={handleCardLike}
-            onCardDelete={handleCardDelete}
+            onCardDelete={onConfirmDelete}
           />
           <Footer />
           <section className="popups" tabIndex="0">
@@ -150,17 +183,28 @@ function App() {
               isOpen={isEditAvatarPopupOpen}
               onClose={closeAllPopups}
               onUpdateAvatar={handleUpdateAvatar}
+              text={valueSubmit}
             />
             <EditProfilePopup
               isOpen={isEditProfilePopupOpen}
               onClose={closeAllPopups}
               onUpdateUser={handleUpdateUser}
+              text={valueSubmit}
             />
             <AddPlacePopup
               isOpen={isAddPlacePopupOpen}
               onClose={closeAllPopups}
               onAddPlace={handleAddPlaceSubmit}
+              text={valueSubmit}
             />
+            <PopupWithForm
+              name={"delete-card"}
+              title={"Вы уверены?"}
+              text={valueSubmitDeleteCard}
+              isOpen={isAddConfirmPopupOpen}
+              onClose={closeAllPopups}
+              onSubmit={handleCardDelete}
+            ></PopupWithForm>
             <ImagePopup
               name={"image"}
               card={selectedCard}

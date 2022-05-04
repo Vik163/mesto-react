@@ -3,7 +3,7 @@ import PopupWithForm from "./PopupWithForm.js";
 
 function EditAvatarPopup(props) {
   const [valueAvatar, setValueAvatar] = React.useState("");
-  const textInput = React.useRef(0);
+  const textInput = React.useRef({});
 
   function handleChangeAvatar(e) {
     setValueAvatar(e.target.value);
@@ -24,7 +24,7 @@ function EditAvatarPopup(props) {
     <PopupWithForm
       name={"profile-avatar"}
       title={"Обновить аватар"}
-      text={"Сохранить"}
+      text={props.text}
       isOpen={props.isOpen}
       onClose={props.onClose}
       onSubmit={handleSubmit}
