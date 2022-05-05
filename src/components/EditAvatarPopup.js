@@ -2,6 +2,7 @@ import React from "react";
 import PopupWithForm from "./PopupWithForm.js";
 
 function EditAvatarPopup(props) {
+  const { text, isOpen, onClose, onUpdateAvatar } = props;
   const [valueAvatar, setValueAvatar] = React.useState("");
   const textInput = React.useRef({});
 
@@ -9,24 +10,29 @@ function EditAvatarPopup(props) {
     setValueAvatar(e.target.value);
   }
 
+  function clearInput() {
+    setValueAvatar("");
+  }
+  //Сброс инпутов реализовал через функцию, по другому хорошо не получилось.
+
   function handleSubmit(e) {
     e.preventDefault();
 
-    props.onUpdateAvatar(
+    onUpdateAvatar(
       {
         avatar: textInput.current.value,
       },
-      setValueAvatar
+      clearInput
     );
   }
 
   return (
     <PopupWithForm
-      name={"profile-avatar"}
-      title={"Обновить аватар"}
-      text={props.text}
-      isOpen={props.isOpen}
-      onClose={props.onClose}
+      name="profile-avatar"
+      title="Обновить аватар"
+      text={text}
+      isOpen={isOpen}
+      onClose={onClose}
       onSubmit={handleSubmit}
     >
       <label className="popup__label popup__label_type_profile-avatar">

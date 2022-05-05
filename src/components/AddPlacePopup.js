@@ -2,17 +2,15 @@ import React from "react";
 import PopupWithForm from "./PopupWithForm.js";
 
 function AddPlacePopup(props) {
-  const [valuePlace, setValuePlace] = React.useState("");
-  const [valueImage, setValueImage] = React.useState("");
-  const textInputPlace = React.useRef({});
-  const textInputImage = React.useRef({});
+  const [cardData, setCardData] = React.useState({ name: "", link: "" });
 
-  function handleChangePlace(e) {
-    setValuePlace(e.target.value);
-  }
+  const handleChangeInput = (event) => {
+    const { value, name } = event.target;
+    setCardData({ ...cardData, [name]: value });
+  };
 
-  function handleChangeImage(e) {
-    setValueImage(e.target.value);
+  function clearInput() {
+    setCardData({ name: "", link: "" });
   }
 
   function handleSubmit(e) {
@@ -20,18 +18,17 @@ function AddPlacePopup(props) {
 
     props.onAddPlace(
       {
-        name: textInputPlace.current.value,
-        link: textInputImage.current.value,
+        name: cardData.name,
+        link: cardData.link,
       },
-      setValueImage,
-      setValuePlace
+      clearInput
     );
   }
 
   return (
     <PopupWithForm
-      name={"cards"}
-      title={"Новое место"}
+      name="cards"
+      title="Новое место"
       text={props.text}
       isOpen={props.isOpen}
       onClose={props.onClose}
@@ -42,9 +39,8 @@ function AddPlacePopup(props) {
           className="popup__input popup__input_type_title"
           id="title-input"
           type="text"
-          onChange={handleChangePlace}
-          value={valuePlace}
-          ref={textInputPlace}
+          onChange={handleChangeInput}
+          value={cardData.name}
           placeholder="Название"
           name="name"
           minLength="2"
@@ -58,9 +54,8 @@ function AddPlacePopup(props) {
           className="popup__input popup__input_type_link"
           id="url-input"
           type="url"
-          onChange={handleChangeImage}
-          value={valueImage}
-          ref={textInputImage}
+          onChange={handleChangeInput}
+          value={cardData.link}
           placeholder="Ссылка на картинку"
           name="link"
           required

@@ -1,10 +1,20 @@
 import React from "react";
 import Card from "./Card.js";
-import { CurrentUserContext, Cards } from "../contexts/CurrentUserContext";
+import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
 function Main(props) {
+  const {
+    onEditAvatar,
+    onEditProfile,
+    onAddPlace,
+    onImagePopup,
+    onCardLike,
+    onCardDelete,
+    cards,
+  } = props;
+
   const currentUser = React.useContext(CurrentUserContext);
-  const cards = React.useContext(Cards);
+  // const cards = React.useContext(Cards);
 
   return (
     <main className="content">
@@ -18,7 +28,7 @@ function Main(props) {
             />
             <button
               className="profile__avatar-button button-hover"
-              onClick={props.onEditAvatar}
+              onClick={onEditAvatar}
               type="button"
               aria-label="edit"
             ></button>
@@ -27,7 +37,7 @@ function Main(props) {
             <h1 className="profile__title">{currentUser.name}</h1>
             <button
               className="profile__edit-button button-hover"
-              onClick={props.onEditProfile}
+              onClick={onEditProfile}
               type="button"
               aria-label="edit"
             ></button>
@@ -36,7 +46,7 @@ function Main(props) {
         </div>
         <button
           className="profile__add-button button-hover"
-          onClick={props.onAddPlace}
+          onClick={onAddPlace}
           type="button"
           aria-label="add"
         ></button>
@@ -47,10 +57,10 @@ function Main(props) {
           {cards.map((card) => (
             <Card
               card={card}
-              onImagePopup={props.onImagePopup}
+              onImagePopup={onImagePopup}
               key={card._id}
-              onCardLike={props.onCardLike}
-              onCardDelete={props.onCardDelete}
+              onCardLike={onCardLike}
+              onCardDelete={onCardDelete}
             />
           ))}
         </ul>

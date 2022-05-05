@@ -1,16 +1,15 @@
 import React from "react";
+
 import Header from "./Header.js";
 import Footer from "./Footer.js";
 import Main from "./Main.js";
-import { apiNew } from "./../utils/Api.js";
 import AddPlacePopup from "./AddPlacePopup.js";
 import PopupWithForm from "./PopupWithForm.js";
 import ImagePopup from "./ImagePopup.js";
 import EditProfilePopup from "./EditProfilePopup.js";
 import EditAvatarPopup from "./EditAvatarPopup.js";
-import { CurrentUserContext, Cards } from "../contexts/CurrentUserContext";
-
-//Накосячил, конечно. Но, что еще поправить не знаю.
+import { CurrentUserContext } from "../contexts/CurrentUserContext";
+import { api } from "./../utils/api.js";
 
 function App() {
   const [currentUser, setCurrentUser] = React.useState({});
@@ -30,7 +29,7 @@ function App() {
   const [cards, setCards] = React.useState([]);
 
   React.useEffect(() => {
-    Promise.all([apiNew.getUserInfo(), apiNew.getInitialCards()])
+    Promise.all([api.getUserInfo(), api.getInitialCards()])
       .then(([userData, cards]) => {
         setCurrentUser(userData);
         setCards(cards);
@@ -40,15 +39,14 @@ function App() {
       });
   }, []);
 
-  function handleAddPlaceSubmit(obj, setValueImage, setValuePlace) {
+  function handleAddPlaceSubmit(obj, clearInput) {
     setValueSubmit("Сохранение...");
-    apiNew
+    api
       .addCard(obj)
       .then((newCard) => {
         setCards([newCard, ...cards]);
         closeAllPopups();
-        setValueImage("");
-        setValuePlace("");
+        clearInput();
       })
       .catch((err) => {
         console.log(err);
@@ -62,7 +60,7 @@ function App() {
     e.preventDefault();
 
     setValueSubmitDeleteCard("Сохранение...");
-    apiNew
+    api
       .deleteCard(cardDelete)
       .then(() => {
         setCards((state) => state.filter((c) => !(c._id === cardDelete._id)));
@@ -72,7 +70,7 @@ function App() {
         console.log(err);
       })
       .finally(() => {
-        setValueSubmit("Да");
+        setValueSubmitDeleteCard("Да");
       });
   }
 
@@ -84,7 +82,7 @@ function App() {
   function handleUpdateUser(obj) {
     setValueSubmit("Сохранение...");
 
-    apiNew
+    api
       .sendInfoProfile(obj)
       .then((result) => {
         setCurrentUser(result);
@@ -100,42 +98,30 @@ function App() {
 
   function handleCardLike(card) {
     const isLiked = card.likes.some((i) => i._id === currentUser._id);
-
-    !isLiked
-      ? apiNew
-          .addLikes(card)
-          .then((result) => {
-            setCards((state) =>
-              state.map((c) => (c._id === card._id ? result : c))
-            );
-          })
-          .catch((err) => {
-            console.log(err);
-          })
-      : apiNew
-          .deleteLike(card)
-          .then((result) => {
-            setCards((state) =>
-              state.map((c) => (c._id === card._id ? result : c))
-            );
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+    const action = isLiked ? api.deleteLike(card) : api.addLikes(card);
+    action
+      .then((result) => {
+        setCards((state) =>
+          state.map((c) => (c._id === card._id ? result : c))
+        );
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
   function handleCardClick(card) {
     setSelectedCard(card);
   }
 
-  function handleUpdateAvatar(avatar, setValueAvatar) {
+  function handleUpdateAvatar(avatar, clearInput) {
     setValueSubmit("Сохранение...");
-    apiNew
+    api
       .addAvatar(avatar)
       .then((result) => {
         setCurrentUser(result);
         closeAllPopups();
-        setValueAvatar("");
+        clearInput();
       })
       .catch((err) => {
         console.log(err);
@@ -167,51 +153,50 @@ function App() {
   return (
     <div className="page">
       <CurrentUserContext.Provider value={currentUser}>
-        <Cards.Provider value={cards}>
-          <Header />
-          <Main
-            onEditAvatar={handleEditAvatarClick}
-            onEditProfile={handleEditProfileClick}
-            onAddPlace={handleAddPlaceClick}
-            onImagePopup={handleCardClick}
-            onCardLike={handleCardLike}
-            onCardDelete={onConfirmDelete}
+        <Header />
+        <Main
+          onEditAvatar={handleEditAvatarClick}
+          onEditProfile={handleEditProfileClick}
+          onAddPlace={handleAddPlaceClick}
+          onImagePopup={handleCardClick}
+          onCardLike={handleCardLike}
+          onCardDelete={onConfirmDelete}
+          cards={cards}
+        />
+        <Footer />
+        <section className="popups" tabIndex="0">
+          <EditAvatarPopup
+            isOpen={isEditAvatarPopupOpen}
+            onClose={closeAllPopups}
+            onUpdateAvatar={handleUpdateAvatar}
+            text={valueSubmit}
           />
-          <Footer />
-          <section className="popups" tabIndex="0">
-            <EditAvatarPopup
-              isOpen={isEditAvatarPopupOpen}
-              onClose={closeAllPopups}
-              onUpdateAvatar={handleUpdateAvatar}
-              text={valueSubmit}
-            />
-            <EditProfilePopup
-              isOpen={isEditProfilePopupOpen}
-              onClose={closeAllPopups}
-              onUpdateUser={handleUpdateUser}
-              text={valueSubmit}
-            />
-            <AddPlacePopup
-              isOpen={isAddPlacePopupOpen}
-              onClose={closeAllPopups}
-              onAddPlace={handleAddPlaceSubmit}
-              text={valueSubmit}
-            />
-            <PopupWithForm
-              name={"delete-card"}
-              title={"Вы уверены?"}
-              text={valueSubmitDeleteCard}
-              isOpen={isAddConfirmPopupOpen}
-              onClose={closeAllPopups}
-              onSubmit={handleCardDelete}
-            ></PopupWithForm>
-            <ImagePopup
-              name={"image"}
-              card={selectedCard}
-              onClose={closeAllPopups}
-            />
-          </section>
-        </Cards.Provider>
+          <EditProfilePopup
+            isOpen={isEditProfilePopupOpen}
+            onClose={closeAllPopups}
+            onUpdateUser={handleUpdateUser}
+            text={valueSubmit}
+          />
+          <AddPlacePopup
+            isOpen={isAddPlacePopupOpen}
+            onClose={closeAllPopups}
+            onAddPlace={handleAddPlaceSubmit}
+            text={valueSubmit}
+          />
+          <PopupWithForm
+            name="delete-card"
+            title="Вы уверены?"
+            text={valueSubmitDeleteCard}
+            isOpen={isAddConfirmPopupOpen}
+            onClose={closeAllPopups}
+            onSubmit={handleCardDelete}
+          ></PopupWithForm>
+          <ImagePopup
+            name="image"
+            card={selectedCard}
+            onClose={closeAllPopups}
+          />
+        </section>
       </CurrentUserContext.Provider>
     </div>
   );
