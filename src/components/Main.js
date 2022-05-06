@@ -14,7 +14,6 @@ function Main(props) {
   } = props;
 
   const currentUser = React.useContext(CurrentUserContext);
-  // const cards = React.useContext(Cards);
 
   return (
     <main className="content">

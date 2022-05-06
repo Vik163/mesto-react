@@ -10,7 +10,6 @@ class Api {
       return Promise.reject(`Ошибка: ${res.status}`);
     }
   }
-  // Через тернарный оператор не получилось
 
   getUserInfo() {
     return fetch(`${this._settings.baseUrl}/users/me`, {

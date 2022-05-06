@@ -13,7 +13,6 @@ function EditAvatarPopup(props) {
   function clearInput() {
     setValueAvatar("");
   }
-  //Сброс инпутов реализовал через функцию, по другому хорошо не получилось.
 
   function handleSubmit(e) {
     e.preventDefault();
